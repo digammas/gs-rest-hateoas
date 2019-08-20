@@ -1,7 +1,5 @@
 package hello;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -11,19 +9,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@ExposesResourceFor(Greeting.class)
-public class GreetingController {
-
-    @Autowired
-    EntityLinks entityLinks;
+@ExposesResourceFor(Joke.class)
+public class JokeController {
 
     private static final String TEMPLATE = "Hello, %s!";
 
-    @RequestMapping("/greeting")
-    public HttpEntity<Greeting> greeting(
+    @RequestMapping("/joke")
+    public HttpEntity<Joke> joke(
             @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
 
-        Greeting greeting = new Greeting(String.format(TEMPLATE, name));
-        return new ResponseEntity<>(greeting, HttpStatus.OK);
+        Joke joke = new Joke(String.format(TEMPLATE, name));
+        return new ResponseEntity<>(joke, HttpStatus.OK);
     }
 }
