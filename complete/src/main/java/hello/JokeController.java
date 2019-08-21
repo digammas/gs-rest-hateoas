@@ -12,10 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 @ExposesResourceFor(Joke.class)
 public class JokeController {
 
-    private static final String TEMPLATE = "Hello, %s!";
+    private static final String TEMPLATE = "Yellow, %s!";
 
     @RequestMapping("/joke")
     public HttpEntity<Joke> joke(
+            @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
+
+        Joke joke = new Joke(String.format(TEMPLATE, name));
+        return new ResponseEntity<>(joke, HttpStatus.OK);
+    }
+
+    @RequestMapping("/greeting/joke")
+    public HttpEntity<Joke> greeting(
             @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
 
         Joke joke = new Joke(String.format(TEMPLATE, name));

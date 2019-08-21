@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Date;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -33,6 +34,45 @@ public class GreetingResponseAdvice implements ResponseBodyAdvice<Greeting> {
             Class<? extends HttpMessageConverter<?>> aClass,
             ServerHttpRequest serverHttpRequest,
             ServerHttpResponse serverHttpResponse) {
+
+
+        long max;
+        GreetingController obj = methodOn(GreetingController.class);
+
+        System.out.println("Super optimized");
+        ActionLink link = ActionLink.of(obj.greeting("###"), "self", HttpMethod.GET);
+        max = 0;
+        for (int j = 0; j < 100; j++) {
+            max += 1000;
+            long ms = new Date().getTime();
+            for (long i = 0; i < max; i++) {
+                link.getHref().replace("###", "123");
+            }
+            System.out.printf("%d, %d\n", max, new Date().getTime() - ms);
+        }
+
+        System.out.println("Optimized");
+        max = 0;
+        for (int j = 0; j < 100; j++) {
+            max += 1000;
+            long ms = new Date().getTime();
+            for (long i = 0; i < max; i++) {
+                ActionLink.of(obj.greeting("John"), "self", HttpMethod.GET);
+            }
+            System.out.printf("%d, %d\n", max, new Date().getTime() - ms);
+        }
+
+        System.out.println("Non optimized");
+        max = 0;
+        for (int j = 0; j < 100; j++) {
+            max += 1000;
+            long ms = new Date().getTime();
+            for (long i = 0; i < max; i++) {
+                ActionLink.of(methodOn(GreetingController.class).greeting("John"), "self", HttpMethod.GET);
+            }
+            System.out.printf("%d, %d\n", max, new Date().getTime() - ms);
+        }
+
         greeting.add(ActionLink.of(methodOn(GreetingController.class).greeting(greeting.getContent()), "self", HttpMethod.GET));
         return greeting;
     }
